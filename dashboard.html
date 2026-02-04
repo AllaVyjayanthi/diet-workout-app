@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Health Dashboard</title>
+
+<style>
+body{
+font-family:Segoe UI, Arial;
+background:#f2f4f8;
+}
+
+.container{
+width:85%;
+margin:auto;
+padding:20px;
+}
+
+/* Common box */
+.box{
+background:white;
+padding:25px;
+border-radius:12px;
+margin:20px 0;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-left:6px solid #4CAF50;
+}
+
+/* Section accent borders */
+.goal{border-left-color:#3f51b5;}
+.bmi{border-left-color:#e91e63;}
+.calorie{border-left-color:#009688;}
+.diet{border-left-color:#ff9800;}
+.workout{border-left-color:#f44336;}
+.chat{border-left-color:#2196f3;}
+
+h2{
+margin-top:0;
+color:#333;
+}
+
+ul{
+font-size:17px;
+line-height:1.8;
+}
+
+b{
+color:#222;
+}
+
+/* Chatbot */
+.chat input{
+width:70%;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+.chat button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#2196f3;
+color:white;
+cursor:pointer;
+}
+
+.sample button{
+margin:5px;
+padding:8px 12px;
+border-radius:6px;
+border:1px solid #1b1818;
+cursor:pointer;
+background:#131010;
+}
+</style>
+
+<script>
+function askSample(q){
+document.getElementById("msg").value=q;
+sendMsg();
+}
+
+function sendMsg(){
+let msg=document.getElementById("msg").value;
+
+fetch("/chat",{
+method:"POST",
+headers:{'Content-Type':'application/x-www-form-urlencoded'},
+body:"msg="+msg
+})
+.then(res=>res.text())
+.then(data=>{
+document.getElementById("reply").innerHTML=data;
+});
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="box goal">
+<h2>🎯 Goal</h2>
+<p>{{ goal }}</p>
+</div>
+
+<div class="box bmi">
+<h2>📊 BMI Status</h2>
+<p><b>Status:</b> {{ status }}</p>
+<p><b>Your BMI:</b> {{ bmi }}</p>
+
+<p>
+Underweight: Below 18.5 <br>
+Healthy: 18.5 – 24.9 <br>
+Overweight: 25 – 29.9 <br>
+Obese: 30 or higher
+</p>
+</div>
+
+<div class="box calorie">
+<h2>🔥 Daily Calories</h2>
+<p>{{ calories }} kcal</p>
+</div>
+
+<div class="box diet">
+<h2>🥗 Diet Plan</h2>
+
+<ul>
+{% for time, food in diet.items() %}
+<li><b>{{ time }}</b> → {{ food }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="box workout">
+<h2>💪 Weekly Workout Plan</h2>
+
+<ul>
+{% for day, work in weekly_workout.items() %}
+<li><b>{{ day }}</b> → {{ work }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="box chat">
+<h2>🤖 Health Chatbot</h2>
+
+<div class="sample">
+<p><b>Sample Questions:</b></p>
+<button onclick="askSample('weight loss')">Weight Loss</button>
+<button onclick="askSample('belly fat')">Exercise for Belly Fat</button>
+<button onclick="askSample('diabetes')">Diabetes Diet</button>
+<button onclick="askSample('how to gain weight')">Weight Gain Tips</button>
+<button onclick="askSample('protein')">Protein</button>
+<button onclick="askSample('water')">Water</button>
+</div>
+
+<br>
+
+<input type="text" id="msg" placeholder="Ask your health question">
+<button onclick="sendMsg()">Send</button>
+
+<p><b>Reply:</b> <span id="reply"></span></p>
+
+</div>
+
+</div>
+
+</body>
+</html>
+
+
